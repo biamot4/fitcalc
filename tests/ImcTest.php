@@ -2,6 +2,7 @@
 
 use Controller\ImcController;
 use PHPUnit\Framework\TestCase;
+use Model\Imcs;
 
 class ImcTest extends TestCase{
 
@@ -9,8 +10,15 @@ class ImcTest extends TestCase{
     //Responsável por realizar a comunicação com o banco de dados e a lógica da aplicação
     private $imcController;
 
+    // ATRIBUTO PARA O FAKE DO BANCO DE DADOS
+    private $mockImcModel;
     protected function setUp(): void{
-        $this->imcController = new ImcController();
+        // CRIO O FAKE DO BANCO DO BANCO DE DADOS
+        $this->mockImcModel = $this->createMock(Imcs::class);
+
+        // PASSO ESSE FAKE PARA O CONTROLLER, ASSIM ME PERMITE UTILIZAR
+        // AS MESMAS FUNCIONALIUDADES, SÓ QUE SEM MODIFICAR O BANCO DE DADOS REAL
+        $this->imcController = new ImcController($this->mockImcModel);
     }
 
 //Verificar cálculo do IMC
@@ -57,6 +65,8 @@ public function it_shouldnt_be_able_to_calculate_bmi_with_null_empty_inputs (){
     $this->assertEquals('Por favor, informe peso e altura para obter o seu IMC.', $imcResult['BMIrange']);
 
 }
+
+
 
 
 //Obter o IMC e Classificar
@@ -140,10 +150,19 @@ public function it_returns_obesity_III_for_bmi(){
 
 
 // Salvar o IMC
-// #[PHPUnit\Framework\Attributes\Test]
-// public function it_should_be_able_to_save_bmi(){
 
-// }
+#[PHPUnit\Framework\Attributes\Test]
+public function it_should_be_able_to_save_bmi(){
+    $imcResult = $this->imcController->calculateImc(68, 1.68);
+
+    $this->assertStringNotContainsString("Por favor, informe peso e altura para obter o seu IMC", $imcResult['BMIrange']);
+
+    $this->mockImcModel->expects($this->once())->method('createImc')->with($this->equalTo(68), $this->equalTo(1.68))->willReturn(true);
+
+    $this->imcController->saveImc(68, 1.68, $imcResult['imc']);
+
+    $this->assertTrue(true);
+}
 }
 
 ?>
