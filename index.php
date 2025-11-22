@@ -1,9 +1,19 @@
 <?php 
+// OBRIGATÓRIO: Iniciar a sessão para que o UserController.php possa
+// armazenar os dados do usuário em $_SESSION (linha 86 de UserController.php)
+session_start();
+
 require_once 'vendor/autoload.php';
 
+// CORREÇÃO DO ERRO: Importar o Model\User
+use Model\User;
 use Controller\UserController;
 
-$userController = new UserController();
+// 1. Instancia o Model (a dependência)
+$userModel = new User();
+// 2. Instancia o Controller e passa o Model como argumento
+$userController = new UserController($userModel); 
+
 $loginMessage = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -11,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     if ($userController->login($email, $password)) {
+        // Redireciona se o login for bem-sucedido
         header('Location: View/home.php');
         exit();
     } else {
@@ -18,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-
+// INÍCIO DO HTML ABAIXO
 ?>
 
 
@@ -29,9 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+        xintegrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="templates/assets/css/login.css">
+    <!-- Verifique se o caminho para o CSS está correto.
+    Assumindo que o arquivo está em templates/assets/css/login.css -->
+    <link rel="stylesheet" href="templates/assets/css/login.css"> 
     <title>FitCalc | Entrar na Conta</title>
 
 </head>
@@ -100,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+        xintegrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
         crossorigin="anonymous"></script>
 </body>
 
